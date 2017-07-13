@@ -37,3 +37,5 @@ sysinfo.txt
 *.meta
 /Library/Metadata/
 /Library/ShaderCache/
+VR-SHOOTER/Library/metadata/
+VR-SHOOTER/Library/ShaderCache/
