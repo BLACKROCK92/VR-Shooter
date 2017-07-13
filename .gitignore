@@ -35,4 +35,5 @@ sysinfo.txt
 
 # Metadata by the guachones
 *.meta
-/Library/Metadata*
+/Library/Metadata/
+/Library/ShaderCache/
