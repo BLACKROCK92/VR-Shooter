@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class Player_Shoot : MonoBehaviour
 {
@@ -16,34 +17,41 @@ public class Player_Shoot : MonoBehaviour
     private Camera fpsCam;
     private WaitForSeconds shotgunDuration = new WaitForSeconds(0.07f);
     private AudioSource shotgunAudio;
-    private LineRenderer laserLine;
+
     private float nextFire;
     private RaycastHit hit;
+    private SteamVR_TrackedController controller;
+    private ParticleSystem Fire;
 
     #endregion
 
     void Start()
     {
-        laserLine = GetComponent<LineRenderer>();
-        shotgunAudio = GetComponent<AudioSource>();
-        fpsCam = GetComponentInParent<Camera>();
+
+        shotgunAudio = FindObjectOfType<AudioSource>();
+        fpsCam = FindObjectOfType<Camera>();
+        controller = transform.parent.parent.GetComponent<SteamVR_TrackedController>();
+        Fire = transform.GetChild(0).GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1") && Time.time > nextFire)
+
+        if (controller.triggerPressed && Time.time > nextFire)
         {
+            Fire.Play();
             nextFire = Time.time + fireRate;
             StartCoroutine(ShotEffect());
             Vector3 rayOrigin = fpsCam.ViewportToWorldPoint(new Vector3(.5f, .5f, 0));
-            laserLine.SetPosition(0, shotgunEnd.position);
-            if (Physics.Raycast(rayOrigin, fpsCam.transform.forward, out hit, weaponRange))
+            //laserLine.SetPosition(0, shotgunEnd.position);
+            if (Physics.Raycast(rayOrigin, (shotgunEnd.transform.right) * -1, out hit, weaponRange))
             {
-                laserLine.SetPosition(1, hit.point);
+
+                //laserLine.SetPosition(1, hit.point);
             }
             else
             {
-                laserLine.SetPosition(1, rayOrigin + (fpsCam.transform.forward * weaponRange));
+                //laserLine.SetPosition(1, rayOrigin + ((shotgunEnd.transform.right*-1) * weaponRange));
             }
         }
     }
@@ -51,8 +59,10 @@ public class Player_Shoot : MonoBehaviour
     private IEnumerator ShotEffect()
     {
         shotgunAudio.Play();
-        laserLine.enabled = true;
+        print("ShotgunAudio");
+        //laserLine.enabled = true;
         yield return shotgunDuration;
-        laserLine.enabled = false;
+        //laserLine.enabled = false;
     }
+
 }
